@@ -137,15 +137,22 @@ namespace nicold.heartrate
         private void _scanningForDevice()
         {
             Android.Util.Log.Debug("_scanningForDevice", "");
+
+            try
+            {
+                _status = Status.STATUS_SCANNING_FOR_DEVICE;
+
+                _connectionRetry = 0;
+                _cancellationTokenSource = new CancellationTokenSource();
+
+                _adapter.ScanTimeout = 10000; //millisecondi
+                _adapter.StartScanningForDevicesAsync(serviceUuids: null, deviceFilter: null, cancellationToken: _cancellationTokenSource.Token);
+            }
+            catch (Exception e)
+            {
+                Android.Util.Log.Debug("_adapter_DeviceConnectionLost", e.Message);
+            }   
             
-            _status = Status.STATUS_SCANNING_FOR_DEVICE;
-
-            _connectionRetry = 0;
-            _cancellationTokenSource = new CancellationTokenSource();
-
-            _adapter.ScanTimeout = 10000; //millisecondi
-            _adapter.StartScanningForDevicesAsync(serviceUuids: null, deviceFilter: null, cancellationToken: _cancellationTokenSource.Token);
-
             return;
         }
 
@@ -158,7 +165,7 @@ namespace nicold.heartrate
 
         private void _adapter_ScanTimeoutElapsed(object sender, EventArgs e)
         {
-            Android.Util.Log.Debug("_adapter_ScanTimeoutElapsed", $"");
+            Android.Util.Log.Debug("_adapter_ScanTimeoutElapsed", $"TIMEOUT iteration {_connectionRetry}");
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
@@ -216,27 +223,42 @@ namespace nicold.heartrate
             _status = Status.STATUS_STARTED;
         }
 
-        private async void CharacteristicHR_ValueUpdated(object sender, Plugin.BLE.Abstractions.EventArgs.CharacteristicUpdatedEventArgs e)
+        private async void CharacteristicHR_ValueUpdated(object sender, Plugin.BLE.Abstractions.EventArgs.CharacteristicUpdatedEventArgs args)
         {
             // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.heart_rate_measurement.xml
             // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.battery_level.xml
 
-            int heartValue;
-            var bytes = e.Characteristic.Value;
+            try
+            {
+                int heartValue;
+                var bytes = args.Characteristic.Value;
 
-            // temporaneo...
-            heartValue = bytes[1];
+                heartValue = bytes[1];
 
-            var batteryLevelByte = await _characteristicBatteryLevel?.ReadAsync();
+                if (_currentValue == null)
+                {
+                    _currentValue = new heartrate.HeartRateData();
+                }
+                
+                _currentValue.Value = bytes[1];
+                _currentValue.Timestamp = DateTime.Now;
+
+                if (_currentValue.TimestampBatteryLevel ==null ||
+                    (DateTime.Now-_currentValue.TimestampBatteryLevel).Value.Minutes>1)
+                {
+                    var batteryLevelByte = await _characteristicBatteryLevel?.ReadAsync();
+
+                    _currentValue.TimestampBatteryLevel = DateTime.Now;
+                    _currentValue.BatteryLevel = batteryLevelByte[0];
+                }
+                
+                Android.Util.Log.Debug("CharacteristicHR_ValueUpdated", $"Device {_currentValue.Value}");
+            }
+            catch (Exception e)
+            {
+                Android.Util.Log.Debug("CharacteristicHR_ValueUpdated", e.Message);
+            }
             
-            var newValue = new HeartRateData();
-            newValue.Timestamp = DateTime.Now;
-            newValue.Value = heartValue;
-            newValue.BatteryLevel = batteryLevelByte?[0];
-
-            _currentValue = newValue;
-
-            Android.Util.Log.Debug("CharacteristicHR_ValueUpdated", $"Device {_currentValue.Value}");
         }
     }
 }

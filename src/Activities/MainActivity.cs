@@ -11,7 +11,8 @@ namespace nicold.heartrate.Activities
     [Activity(Label = "nicold.heartrate.main", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
-        private ListView listDevices;
+        private ListView _listDevices;
+        ProgressBar _progressWorking;
         private ArrayAdapter<string> listAdapter;
 
         private HeartRateEnumeratorAndroid _hrEnumerator;
@@ -25,21 +26,27 @@ namespace nicold.heartrate.Activities
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            listDevices = FindViewById<ListView>(Resource.Id.list_devices);
-            listDevices.Adapter=listAdapter;
-            listDevices.ItemClick += ListDevices_ItemClick;
+
+            listAdapter = new ArrayAdapter<string>(this, Resource.Layout.simplerow);
+            _listDevices = FindViewById<ListView>(Resource.Id.list_devices);
+            _listDevices.Adapter=listAdapter;
+            _listDevices.ItemClick += ListDevices_ItemClick;
 
             Button button_start_scan = FindViewById<Button>(Resource.Id.button_start_scan);
             button_start_scan.Click += Button_start_scan_Click;
 
             Button button_stop_scan = FindViewById<Button>(Resource.Id.button_stop_scan);
             button_stop_scan.Click += Button_stop_scan_Click;
+
+            _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
         }
 
         private void Button_start_scan_Click(object sender, EventArgs e)
         {
-            if(_hrEnumerator == null)
+            if (_hrEnumerator == null)
             {
+                _progressWorking.Visibility = ViewStates.Visible;
+
                 _hrEnumerator = new heartrate.HeartRateEnumeratorAndroid();
                 _hrEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
                 _hrEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
@@ -47,6 +54,19 @@ namespace nicold.heartrate.Activities
 
                 listAdapter.Clear();
                 listAdapter.Add($"> start");
+            }
+        }
+
+        private void Button_stop_scan_Click(object sender, EventArgs e)
+        {
+            _progressWorking.Visibility = ViewStates.Invisible;
+            if (_hrEnumerator != null)
+            {
+                _hrEnumerator.DeviceScanUpdate -= _hrEnumerator_DeviceScanUpdate;
+                _hrEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
+                _hrEnumerator.StopDeviceScan();
+                _hrEnumerator = null;
+                listAdapter.Add($"> stop");
             }
         }
 
@@ -61,23 +81,11 @@ namespace nicold.heartrate.Activities
             listAdapter.Add($"{e.Name}");
         }
 
-        private void Button_stop_scan_Click(object sender, EventArgs e)
-        {
-            if (_hrEnumerator != null)
-            {
-                _hrEnumerator.DeviceScanUpdate -= _hrEnumerator_DeviceScanUpdate;
-                _hrEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
-                _hrEnumerator.StopDeviceScan();
-                _hrEnumerator = null;
-                listAdapter.Add($"> stop");
-            }
-        }
-
         private void ListDevices_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             Button_stop_scan_Click(sender, e);
 
-            selected = (string)listDevices.GetItemAtPosition(e.Position);
+            selected = (string)_listDevices.GetItemAtPosition(e.Position);
 
             var activityHeart = new Intent(this, typeof(HeartActivity));
             activityHeart.PutExtra($"device", selected);

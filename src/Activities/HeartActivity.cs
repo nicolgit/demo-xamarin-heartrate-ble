@@ -23,6 +23,8 @@ namespace nicold.heartrate.Activities
         private TextView _textHR;
         private TextView _textBattery;
         private TextView _textinfo;
+        private TextView _textinfo2;
+        ProgressBar _progressWorking;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -44,7 +46,10 @@ namespace nicold.heartrate.Activities
 
             _textHR = FindViewById<TextView>(Resource.Id.textHR);
             _textBattery = FindViewById<TextView>(Resource.Id.textBattery);
-            _textinfo= FindViewById<TextView>(Resource.Id.textInfo);
+            _textinfo = FindViewById<TextView>(Resource.Id.textInfo);
+            _textinfo2 = FindViewById<TextView>(Resource.Id.textInfo2);
+
+            _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
 
             Task.Run(async () => await _forever());
         }
@@ -67,8 +72,10 @@ namespace nicold.heartrate.Activities
                 RunOnUiThread(() =>
                 {
                     _textinfo.Text = data?.Timestamp.ToString() ?? "N/A";
-                    _textHR.Text = data?.Value.ToString() ?? "N/A";
-                    _textBattery.Text = data?.BatteryLevel?.ToString()+"%" ?? "N/A";
+                    _textHR.Text = data?.Value.ToString() ?? "---";
+
+                    _textBattery.Text = data?.BatteryLevel?.ToString() ?? "N/A";
+                    _textinfo2.Text = data?.TimestampBatteryLevel?.ToString() ?? "---";
                 });
 
                 await Task.Delay(500);
@@ -77,11 +84,13 @@ namespace nicold.heartrate.Activities
 
         private void Button_stop_hr_Click(object sender, EventArgs e)
         {
+            _progressWorking.Visibility = ViewStates.Invisible;
             _heartRate.Stop();
         }
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
+            _progressWorking.Visibility = ViewStates.Visible;
             Task<bool>.Run(async () => await start());
             //_heartRate.Start(_deviceName);
         }

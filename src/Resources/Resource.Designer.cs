@@ -63,32 +63,38 @@ namespace nicold.heartrate
 			// aapt resource value: 0x7f050000
 			public const int button_start_hr = 2131034112;
 			
-			// aapt resource value: 0x7f050006
-			public const int button_start_scan = 2131034118;
+			// aapt resource value: 0x7f050008
+			public const int button_start_scan = 2131034120;
 			
 			// aapt resource value: 0x7f050001
 			public const int button_stop_hr = 2131034113;
 			
-			// aapt resource value: 0x7f050007
-			public const int button_stop_scan = 2131034119;
-			
-			// aapt resource value: 0x7f050008
-			public const int list_devices = 2131034120;
-			
 			// aapt resource value: 0x7f050009
-			public const int rowTextView = 2131034121;
+			public const int button_stop_scan = 2131034121;
 			
-			// aapt resource value: 0x7f050004
-			public const int textBattery = 2131034116;
+			// aapt resource value: 0x7f05000a
+			public const int list_devices = 2131034122;
 			
 			// aapt resource value: 0x7f050002
-			public const int textDeviceName = 2131034114;
+			public const int progress_work = 2131034114;
+			
+			// aapt resource value: 0x7f05000b
+			public const int rowTextView = 2131034123;
+			
+			// aapt resource value: 0x7f050006
+			public const int textBattery = 2131034118;
 			
 			// aapt resource value: 0x7f050003
-			public const int textHR = 2131034115;
+			public const int textDeviceName = 2131034115;
+			
+			// aapt resource value: 0x7f050004
+			public const int textHR = 2131034116;
 			
 			// aapt resource value: 0x7f050005
 			public const int textInfo = 2131034117;
+			
+			// aapt resource value: 0x7f050007
+			public const int textInfo2 = 2131034119;
 			
 			static Id()
 			{

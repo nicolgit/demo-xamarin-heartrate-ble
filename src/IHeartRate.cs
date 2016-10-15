@@ -17,6 +17,7 @@ namespace nicold.heartrate
     {
         public DateTime Timestamp;
         public int Value;
+        public DateTime? TimestampBatteryLevel;
         public int? BatteryLevel;
     }
     
