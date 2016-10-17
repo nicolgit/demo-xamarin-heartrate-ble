@@ -64,11 +64,10 @@ namespace CaledosLab.Runner.Android.Specific
             return _currentValue;
         }
 
-        public bool Start(string deviceId)
+        public bool Start()
         {
             if (!IsRunning)
             {
-                _deviceName = deviceId;
                 Task<bool>.Run(async () => await _start());
             }
             
@@ -84,6 +83,18 @@ namespace CaledosLab.Runner.Android.Specific
             }
         }
 
+        public string DeviceName
+        {
+            get
+            {
+                return _deviceName;
+            }
+
+            set
+            {
+                _deviceName = value;
+            }
+        }
 
         private async Task _start()
         {

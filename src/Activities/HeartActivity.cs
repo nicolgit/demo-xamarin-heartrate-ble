@@ -97,11 +97,9 @@ namespace nicold.heartrate.Activities
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
-            
             _progressWorking.Visibility = ViewStates.Visible;
-            _heartRate.Start(_deviceName);
-
-            
+            _heartRate.DeviceName = _deviceName;
+            _heartRate.Start();
         }
     }
 }
