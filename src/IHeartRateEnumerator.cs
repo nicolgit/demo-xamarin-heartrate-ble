@@ -2,7 +2,7 @@ using System;
 
 namespace CaledosLab.Runner.Commons.Abstractions
 {
-    interface IHeartRateEnumerator
+    public interface IHeartRateEnumerator
     {
         bool StartDeviceScan();
         bool StopDeviceScan();

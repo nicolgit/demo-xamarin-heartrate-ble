@@ -10,7 +10,7 @@ namespace CaledosLab.Runner.Commons.Abstractions
         public int? BatteryLevel;
     }
     
-    interface IHeartRate
+    public interface IHeartRate
     {
         bool Start(string deviceName);
         bool IsRunning { get; }
