@@ -16,7 +16,7 @@ using CaledosLab.Runner.Commons.Abstractions;
 
 namespace CaledosLab.Runner.Android.Specific
 {
-    class HeartRateAndroidBLE : IHeartRate
+    public class HeartRateAndroidBLE : IHeartRate
     {
         private Guid SERVICE_HEARTRATE = Guid.ParseExact("0000180d-0000-1000-8000-00805f9b34fb", "d");
         private Guid SERVICE_BATTERY = Guid.ParseExact("0000180f-0000-1000-8000-00805f9b34fb", "d");
