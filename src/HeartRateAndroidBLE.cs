@@ -307,7 +307,7 @@ namespace CaledosLab.Runner.Android.Specific
 
         private void _log(string function, string value)
         {
-            LogData += $"{DateTime.Now.ToLongTimeString()} {function} {value}\r\n";
+            //LogData += $"{DateTime.Now.ToLongTimeString()} {function} {value}\r\n";
             global::Android.Util.Log.Debug(function, value);
         }
     }
