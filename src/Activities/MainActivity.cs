@@ -77,9 +77,9 @@ namespace nicold.heartrate.Activities
             Button_stop_scan_Click(null, null);
         }
 
-        private void _hrEnumerator_DeviceScanUpdate(object sender, Plugin.BLE.Abstractions.Contracts.IDevice e)
+        private void _hrEnumerator_DeviceScanUpdate(object sender,string deviceName)
         {
-            listAdapter.Add($"{e.Name}");
+            listAdapter.Add($"{deviceName}");
         }
 
         private void ListDevices_ItemClick(object sender, AdapterView.ItemClickEventArgs e)

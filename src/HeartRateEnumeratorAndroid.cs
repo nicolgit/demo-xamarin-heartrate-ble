@@ -23,7 +23,7 @@ namespace CaledosLab.Runner.Android.Specific
         private List<IDevice> _devices;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public event EventHandler<IDevice> DeviceScanUpdate;
+        public event EventHandler<string> DeviceScanUpdate;
         public event EventHandler DeviceScanTimeout;
 
         public bool StartDeviceScan()
@@ -61,7 +61,7 @@ namespace CaledosLab.Runner.Android.Specific
         private void _adapter_DeviceDiscovered(IDevice device)
         {
             _devices?.Add(device);
-            DeviceScanUpdate?.Invoke(this, device);
+            DeviceScanUpdate?.Invoke(this, device.Name);
         }
 
         public bool StopDeviceScan()
