@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using System.Threading.Tasks;
 using static Android.OS.PowerManager;
+using CaledosLab.Runner.Android.Specific;
 
 namespace nicold.heartrate.Activities
 {

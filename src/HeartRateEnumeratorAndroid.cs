@@ -13,8 +13,9 @@ using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
+using CaledosLab.Runner.Commons.Abstractions;
 
-namespace nicold.heartrate
+namespace CaledosLab.Runner.Android.Specific
 {
     public class HeartRateEnumeratorAndroid : IHeartRateEnumerator
     {

@@ -11,7 +11,7 @@ using Android.Views;
 using Android.Widget;
 using System.Threading.Tasks;
 
-namespace nicold.heartrate
+namespace CaledosLab.Runner.Commons.Abstractions
 {
     public class HeartRateData
     {

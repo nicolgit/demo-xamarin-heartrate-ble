@@ -5,6 +5,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using CaledosLab.Runner.Android.Specific;
 
 namespace nicold.heartrate.Activities
 {
@@ -47,7 +48,7 @@ namespace nicold.heartrate.Activities
             {
                 _progressWorking.Visibility = ViewStates.Visible;
 
-                _hrEnumerator = new heartrate.HeartRateEnumeratorAndroid();
+                _hrEnumerator = new HeartRateEnumeratorAndroid();
                 _hrEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
                 _hrEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
                 _hrEnumerator.StartDeviceScan();

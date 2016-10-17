@@ -12,8 +12,9 @@ using Android.Widget;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE;
 using System.Threading;
+using CaledosLab.Runner.Commons.Abstractions;
 
-namespace nicold.heartrate
+namespace CaledosLab.Runner.Android.Specific
 {
     class HeartRateAndroidBLE : IHeartRate
     {
@@ -268,7 +269,7 @@ namespace nicold.heartrate
 
                 if (_currentValue == null)
                 {
-                    _currentValue = new heartrate.HeartRateData();
+                    _currentValue = new HeartRateData();
                 }
 
                 _currentValue.Value = bytes[1];
@@ -296,7 +297,7 @@ namespace nicold.heartrate
         private void _log(string function, string value)
         {
             LogData += $"{DateTime.Now.ToLongTimeString()} {function} {value}\r\n";
-            Android.Util.Log.Debug(function, value);
+            global::Android.Util.Log.Debug(function, value);
         }
     }
 }

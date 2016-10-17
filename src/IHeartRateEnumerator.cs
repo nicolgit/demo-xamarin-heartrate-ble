@@ -12,18 +12,8 @@ using Android.Widget;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Threading.Tasks;
 
-namespace nicold.heartrate
+namespace CaledosLab.Runner.Commons.Abstractions
 {
-    //public class HeartRateDevice
-    //{
-    //    string Name;
-    //}
-
-    //public class HeartRateDevices : EventArgs
-    //{
-    //    IEnumerable<IDevice> Devices;
-    //}
-
     interface IHeartRateEnumerator
     {
         bool StartDeviceScan();
