@@ -54,7 +54,7 @@ namespace nicold.heartrate.Activities
             _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
 
             var powerManager = (PowerManager)ApplicationContext.GetSystemService(Context.PowerService);
-            var wakeLock = powerManager.NewWakeLock(WakeLockFlags.Partial, "MyWakelockTag");
+            var wakeLock = powerManager.NewWakeLock(WakeLockFlags.Partial, "myNicolLock");
             wakeLock.Acquire();
 
             Task.Run(async () => await _forever());
