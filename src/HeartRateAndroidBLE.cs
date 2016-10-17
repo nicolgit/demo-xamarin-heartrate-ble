@@ -18,7 +18,7 @@ namespace nicold.heartrate
     class HeartRateAndroidBLE : IHeartRate
     {
         private Guid SERVICE_HEARTRATE = Guid.ParseExact("0000180d-0000-1000-8000-00805f9b34fb", "d");
-        private Guid SERVICE_BATTERY =   Guid.ParseExact("0000180f-0000-1000-8000-00805f9b34fb", "d");
+        private Guid SERVICE_BATTERY = Guid.ParseExact("0000180f-0000-1000-8000-00805f9b34fb", "d");
         private Guid CHARACTERISTIC_HEARTRATE = Guid.ParseExact("00002a37-0000-1000-8000-00805f9b34fb", "d");
         private Guid CHARACTERISTIC_BATTERYLEVEL = Guid.ParseExact("00002a19-0000-1000-8000-00805f9b34fb", "d");
 
@@ -35,14 +35,14 @@ namespace nicold.heartrate
 
         private HeartRateData _currentValue;
 
-        private const int MAX_RETRY= 5;
+        private const int MAX_RETRY = 5;
         private string _deviceName = "";
         private enum Status
         {
-           STATUS_STARTED = 1,
-           STATUS_SCANNING_FOR_DEVICE,
-           STATUS_CONNECTED,
-           STATUS_DEAD
+            STATUS_STARTED = 1,
+            STATUS_SCANNING_FOR_DEVICE,
+            STATUS_CONNECTED,
+            STATUS_DEAD
         };
         private Status _status;
 
@@ -54,6 +54,8 @@ namespace nicold.heartrate
             _adapter.DeviceDiscovered += _adapter_DeviceDiscovered;
             _adapter.ScanTimeoutElapsed += _adapter_ScanTimeoutElapsed;
             _adapter.DeviceConnectionLost += _adapter_DeviceConnectionLost;
+
+            _status = Status.STATUS_DEAD;
         }
 
         public HeartRateData GetCurrentHeartRateValue()
@@ -63,7 +65,30 @@ namespace nicold.heartrate
 
         public bool Start(string deviceId)
         {
-            _deviceName = deviceId;
+            if (!IsRunning)
+            {
+                _deviceName = deviceId;
+                Task<bool>.Run(async () => await _start());
+            }
+            
+            return true;
+        }
+
+
+        public bool IsRunning
+        {
+            get
+            {
+                return _status != Status.STATUS_DEAD;
+            }
+        }
+
+
+        private async Task _start()
+        {
+            await Task.Delay(1);
+
+            _log("Start", "started");
 
             _device = null;
             _serviceHR = null;
@@ -72,7 +97,7 @@ namespace nicold.heartrate
             _characteristicBatteryLevel = null;
 
             _status = Status.STATUS_STARTED;
-
+            
             while (true)
             {
                 switch (_status)
@@ -85,7 +110,7 @@ namespace nicold.heartrate
                     case Status.STATUS_CONNECTED:
                         break;
                     case Status.STATUS_DEAD:
-                        return true; //esce
+                        return; //esce
                 }
             }
         }
@@ -107,6 +132,7 @@ namespace nicold.heartrate
             }
 
             _status = Status.STATUS_DEAD;
+            _log("Stop", "end");
             return;
         }
 
@@ -127,16 +153,17 @@ namespace nicold.heartrate
                 _characteristicBatteryLevel = null;
                 _currentValue = null;
 
+                _log("_disconnect", "disconnected");
             }
             catch (Exception e)
             {
-                Android.Util.Log.Debug("_adapter_DeviceConnectionLost", e.Message);
+                _log("_disconnect", e.Message);
             }
         }
 
         private void _scanningForDevice()
         {
-            Android.Util.Log.Debug("_scanningForDevice", "");
+            _log("_scanningForDevice", "");
 
             try
             {
@@ -150,9 +177,9 @@ namespace nicold.heartrate
             }
             catch (Exception e)
             {
-                Android.Util.Log.Debug("_adapter_DeviceConnectionLost", e.Message);
-            }   
-            
+                _log("_adapter_DeviceConnectionLost", e.Message);
+            }
+
             return;
         }
 
@@ -161,16 +188,18 @@ namespace nicold.heartrate
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
+
+            _log("_cancelScanningForDevice","");
         }
 
         private void _adapter_ScanTimeoutElapsed(object sender, EventArgs e)
         {
-            Android.Util.Log.Debug("_adapter_ScanTimeoutElapsed", $"TIMEOUT iteration {_connectionRetry}");
+            _log("_adapter_ScanTimeoutElapsed", $"TIMEOUT iteration {_connectionRetry}");
 
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
 
-            if (_connectionRetry<MAX_RETRY)
+            if (_connectionRetry < MAX_RETRY)
             {
                 _connectionRetry++;
                 _cancellationTokenSource = new CancellationTokenSource();
@@ -179,12 +208,13 @@ namespace nicold.heartrate
             else
             {
                 _status = Status.STATUS_DEAD;
+                _log("_adapter_ScanTimeoutElapsed", "end");
             }
         }
 
         private async void _adapter_DeviceDiscovered(object sender, Plugin.BLE.Abstractions.EventArgs.DeviceEventArgs e)
         {
-            Android.Util.Log.Debug("_adapter_DeviceDiscovered", $"Device {e.Device.Name}");
+            _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name}");
 
             if (e.Device.Name == _deviceName)
             {
@@ -207,18 +237,19 @@ namespace nicold.heartrate
 
                         _characteristicHR.ValueUpdated += CharacteristicHR_ValueUpdated;
                         _characteristicHR.StartUpdates();
+                        _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name} STARTED");
                     }
                 }
                 catch (Exception err)
                 {
-                    Android.Util.Log.Debug("_adapter_DeviceDiscovered", err.Message);
+                    _log("_adapter_DeviceDiscovered", err.Message);
                 }
             }
         }
-        
+
         private async void _adapter_DeviceConnectionLost(object sender, Plugin.BLE.Abstractions.EventArgs.DeviceErrorEventArgs e)
         {
-            Android.Util.Log.Debug("_adapter_DeviceConnectionLost", $"Device {e.Device.Name}");
+            _log("_adapter_DeviceConnectionLost", $"Device {e.Device.Name}");
             await _disconnect();
             _status = Status.STATUS_STARTED;
         }
@@ -239,26 +270,33 @@ namespace nicold.heartrate
                 {
                     _currentValue = new heartrate.HeartRateData();
                 }
-                
+
                 _currentValue.Value = bytes[1];
                 _currentValue.Timestamp = DateTime.Now;
 
-                if (_currentValue.TimestampBatteryLevel ==null ||
-                    (DateTime.Now-_currentValue.TimestampBatteryLevel).Value.Minutes>1)
+                if (_currentValue.TimestampBatteryLevel == null ||
+                    (DateTime.Now - _currentValue.TimestampBatteryLevel).Value.Minutes > 1)
                 {
                     var batteryLevelByte = await _characteristicBatteryLevel?.ReadAsync();
 
                     _currentValue.TimestampBatteryLevel = DateTime.Now;
                     _currentValue.BatteryLevel = batteryLevelByte[0];
                 }
-                
-                Android.Util.Log.Debug("CharacteristicHR_ValueUpdated", $"Device {_currentValue.Value}");
+
+                _log("CharacteristicHR_ValueUpdated", $"Device {_currentValue.Value}");
             }
             catch (Exception e)
             {
-                Android.Util.Log.Debug("CharacteristicHR_ValueUpdated", e.Message);
+                _log("CharacteristicHR_ValueUpdated", e.Message);
             }
-            
+        }
+
+        public string LogData = "";
+
+        private void _log(string function, string value)
+        {
+            LogData += $"{DateTime.Now.ToLongTimeString()} {function} {value}\r\n";
+            Android.Util.Log.Debug(function, value);
         }
     }
 }

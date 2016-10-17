@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using System.Threading.Tasks;
+using static Android.OS.PowerManager;
 
 namespace nicold.heartrate.Activities
 {
@@ -51,6 +52,10 @@ namespace nicold.heartrate.Activities
 
             _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
 
+            var powerManager = (PowerManager)ApplicationContext.GetSystemService(Context.PowerService);
+            var wakeLock = powerManager.NewWakeLock(WakeLockFlags.Partial, "MyWakelockTag");
+            wakeLock.Acquire();
+
             Task.Run(async () => await _forever());
         }
 
@@ -86,20 +91,16 @@ namespace nicold.heartrate.Activities
         {
             _progressWorking.Visibility = ViewStates.Invisible;
             _heartRate.Stop();
+            var a = _heartRate.LogData;
         }
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
+            
             _progressWorking.Visibility = ViewStates.Visible;
-            Task<bool>.Run(async () => await start());
-            //_heartRate.Start(_deviceName);
-        }
-
-        private async Task start()
-        {
             _heartRate.Start(_deviceName);
 
-            return;
+            
         }
     }
 }

@@ -24,6 +24,7 @@ namespace nicold.heartrate
     interface IHeartRate
     {
         bool Start(string deviceName);
+        bool IsRunning { get; }
         void Stop();
         HeartRateData GetCurrentHeartRateValue();
     }
