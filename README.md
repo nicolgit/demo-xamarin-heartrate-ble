@@ -7,4 +7,4 @@ in this sample I use the library found in [xamarin-bluetooth-le](https://github.
  - https://facebook.com/CaledosRunner
 
 #Licence
- - [MIT LICENSE](https://github.com/xabre/MvvmCross-BluetoothLE/blob/master/LICENSE)
+ - [MIT LICENSE](https://github.com/nicolgit/demo-xamarin-heartrate-ble/blob/master/LICENSE.md)
