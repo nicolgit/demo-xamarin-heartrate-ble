@@ -15,7 +15,7 @@ using CaledosLab.Runner.Android.Specific;
 
 namespace nicold.heartrate.Activities
 {
-    [Activity(Label = "nicold.heartrate.heart", Icon = "@drawable/icon")]
+    [Activity(Label = "nicold.heartrate.heart", Icon = "@drawable/icon", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class HeartActivity : Activity
     {
         private string _deviceName;
@@ -23,6 +23,7 @@ namespace nicold.heartrate.Activities
         private HeartRateAndroidBLE _heartRate = new HeartRateAndroidBLE();
 
         private TextView _textHR;
+        private TextView _textNow;
         private TextView _textBattery;
         private TextView _textinfo;
         private TextView _textinfo2;
@@ -50,6 +51,7 @@ namespace nicold.heartrate.Activities
             _textBattery = FindViewById<TextView>(Resource.Id.textBattery);
             _textinfo = FindViewById<TextView>(Resource.Id.textInfo);
             _textinfo2 = FindViewById<TextView>(Resource.Id.textInfo2);
+            _textNow = FindViewById<TextView>(Resource.Id.textNow);
 
             _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
 
@@ -59,15 +61,15 @@ namespace nicold.heartrate.Activities
 
             Task.Run(async () => await _forever());
         }
-
-        protected override void OnStop()
+        
+        protected override void OnDestroy()
         {
             _stop = true;
             _heartRate.Stop();
 
-            base.OnStop();
-            
+            base.OnDestroy();
         }
+
         private bool _stop = false;
         private async Task _forever()
         {
@@ -77,6 +79,8 @@ namespace nicold.heartrate.Activities
 
                 RunOnUiThread(() =>
                 {
+                    _textNow.Text = DateTime.Now.ToString();
+                       
                     _textinfo.Text = data?.Timestamp.ToString() ?? "N/A";
                     _textHR.Text = data?.Value.ToString() ?? "---";
 

@@ -226,35 +226,45 @@ namespace CaledosLab.Runner.Android.Specific
 
         private async void _adapter_DeviceDiscovered(object sender, Plugin.BLE.Abstractions.EventArgs.DeviceEventArgs e)
         {
-            _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name}");
-
-            if (e.Device.Name == _deviceName)
+            if (_status == Status.STATUS_SCANNING_FOR_DEVICE)
             {
-                try
+                _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name}");
+
+                if (e.Device.Name == _deviceName)
                 {
-                    _device = e.Device;
-
-                    await _adapter.ConnectToDeviceAsync(_device);
-                    _serviceHR = await e.Device.GetServiceAsync(SERVICE_HEARTRATE);
-                    _characteristicHR = await _serviceHR?.GetCharacteristicAsync(CHARACTERISTIC_HEARTRATE);
-
-                    _serviceBattery = await e.Device.GetServiceAsync(SERVICE_BATTERY);
-                    _characteristicBatteryLevel = await _serviceBattery?.GetCharacteristicAsync(CHARACTERISTIC_BATTERYLEVEL);
-
-                    if (_characteristicHR != null)
+                    try
                     {
-                        _status = Status.STATUS_CONNECTED;
+                        _device = e.Device;
 
-                        _cancelScanningForDevice();
+                        await _adapter.ConnectToDeviceAsync(_device);
+                        _serviceHR = await e.Device.GetServiceAsync(SERVICE_HEARTRATE);
+                        _characteristicHR = await _serviceHR?.GetCharacteristicAsync(CHARACTERISTIC_HEARTRATE);
 
-                        _characteristicHR.ValueUpdated += CharacteristicHR_ValueUpdated;
-                        _characteristicHR.StartUpdates();
-                        _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name} STARTED");
+                        _serviceBattery = await e.Device.GetServiceAsync(SERVICE_BATTERY);
+                        if (_serviceBattery != null)
+                        {
+                            _characteristicBatteryLevel = await _serviceBattery?.GetCharacteristicAsync(CHARACTERISTIC_BATTERYLEVEL);
+                        }
+                        else
+                        {
+                            _characteristicBatteryLevel = null;
+                        }
+
+                        if (_characteristicHR != null)
+                        {
+                            _status = Status.STATUS_CONNECTED;
+
+                            _cancelScanningForDevice();
+
+                            _characteristicHR.ValueUpdated += CharacteristicHR_ValueUpdated;
+                            _characteristicHR.StartUpdates();
+                            _log("_adapter_DeviceDiscovered", $"Device {e.Device.Name} STARTED");
+                        }
                     }
-                }
-                catch (Exception err)
-                {
-                    _log("_adapter_DeviceDiscovered", err.Message);
+                    catch (Exception err)
+                    {
+                        _log("_adapter_DeviceDiscovered", err.Message);
+                    }
                 }
             }
         }
@@ -285,14 +295,20 @@ namespace CaledosLab.Runner.Android.Specific
 
                 _currentValue.Value = bytes[1];
                 _currentValue.Timestamp = DateTime.Now;
+               
 
-                if (_currentValue.TimestampBatteryLevel == null ||
-                    (DateTime.Now - _currentValue.TimestampBatteryLevel).Value.Minutes > 1)
+                if (_characteristicBatteryLevel != null)
                 {
-                    var batteryLevelByte = await _characteristicBatteryLevel?.ReadAsync();
+                    if (_currentValue.TimestampBatteryLevel == null ||
+                    (DateTime.Now - _currentValue.TimestampBatteryLevel).Value.Minutes > 1)
+                    {
+                        _currentValue.BatteryLevel = null;
 
-                    _currentValue.TimestampBatteryLevel = DateTime.Now;
-                    _currentValue.BatteryLevel = batteryLevelByte[0];
+                        var batteryLevelByte = await _characteristicBatteryLevel?.ReadAsync();
+
+                        _currentValue.TimestampBatteryLevel = DateTime.Now;
+                        _currentValue.BatteryLevel = batteryLevelByte[0];
+                    }
                 }
 
                 _log("CharacteristicHR_ValueUpdated", $"Device {_currentValue.Value}");
@@ -307,7 +323,6 @@ namespace CaledosLab.Runner.Android.Specific
 
         private void _log(string function, string value)
         {
-            //LogData += $"{DateTime.Now.ToLongTimeString()} {function} {value}\r\n";
             global::Android.Util.Log.Debug(function, value);
         }
     }

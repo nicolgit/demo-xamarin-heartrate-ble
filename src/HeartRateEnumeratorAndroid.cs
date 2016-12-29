@@ -34,7 +34,7 @@ namespace CaledosLab.Runner.Android.Specific
 
             _adapter.DeviceDiscovered += _adapter_DeviceDiscovered;
             _adapter.ScanTimeoutElapsed += _adapter_ScanTimeoutElapsed;
-            _adapter.ScanTimeout = 10000; // millisecondi
+            _adapter.ScanTimeout = 15000; // millisecondi
 
             foreach(var dev in _adapter.ConnectedDevices)
             {

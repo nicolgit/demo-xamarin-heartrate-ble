@@ -43,6 +43,11 @@
       android:layout_height="wrap_content"
       android:id="@+id/textDeviceName" />
   <TextView
+      android:text="----"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/textNow" />
+  <TextView
       android:text="hr value"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

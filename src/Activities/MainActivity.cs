@@ -9,7 +9,7 @@ using CaledosLab.Runner.Android.Specific;
 
 namespace nicold.heartrate.Activities
 {
-    [Activity(Label = "nicold.heartrate.activities.main", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "nicold.heartrate.activities.main", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
     public class MainActivity : Activity
     {
         private ListView _listDevices;
