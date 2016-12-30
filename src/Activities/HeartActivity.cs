@@ -103,8 +103,6 @@ namespace nicold.heartrate.Activities
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
-            
-
             string[] split = _deviceName.Split(':');
 
             if (split[0] == BLE)
