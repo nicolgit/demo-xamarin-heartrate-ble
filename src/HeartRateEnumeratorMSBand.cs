@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MSBandTest.Droid
+namespace CaledosLab.Runner.Android.Specific
 {
-    class HeartRateEnumeratorMSBand : IHeartRateEnumerator
+    public class HeartRateEnumeratorMSBand : IHeartRateEnumerator
     {
         public event EventHandler DeviceScanTimeout;
         public event EventHandler<string> DeviceScanUpdate;
@@ -44,6 +44,11 @@ namespace MSBandTest.Droid
         public bool StopDeviceScan()
         {
             return false;
+        }
+
+        public IHeartRate GetHeartRate(string name)
+        {
+            return new HeartRateMSBand();
         }
     }
 }

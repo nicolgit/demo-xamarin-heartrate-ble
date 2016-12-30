@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MSBandTest.Droid
+namespace CaledosLab.Runner.Android.Specific
 {
-    class HeartRateMSBand : IHeartRate
+    public class HeartRateMSBand : IHeartRate
     {
         string name = "";
         public string DeviceName
