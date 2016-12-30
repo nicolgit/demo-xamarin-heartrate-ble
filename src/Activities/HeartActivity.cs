@@ -12,6 +12,7 @@ using Android.Widget;
 using System.Threading.Tasks;
 using static Android.OS.PowerManager;
 using CaledosLab.Runner.Android.Specific;
+using CaledosLab.Runner.Commons.Abstractions;
 
 namespace nicold.heartrate.Activities
 {
@@ -20,7 +21,7 @@ namespace nicold.heartrate.Activities
     {
         private string _deviceName;
 
-        private HeartRateAndroidBLE _heartRate = new HeartRateAndroidBLE();
+        private IHeartRate _heartRate;
 
         private TextView _textHR;
         private TextView _textNow;
@@ -96,14 +97,15 @@ namespace nicold.heartrate.Activities
         {
             _progressWorking.Visibility = ViewStates.Invisible;
             _heartRate.Stop();
-            var a = _heartRate.LogData;
         }
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
-            _progressWorking.Visibility = ViewStates.Visible;
-            _heartRate.DeviceName = _deviceName;
+            var enumerator = new HeartRateEnumeratorAndroid();
+
+            _heartRate = enumerator.GetHeartRate(_deviceName);
             _heartRate.Start();
+            _progressWorking.Visibility = ViewStates.Visible;
         }
     }
 }

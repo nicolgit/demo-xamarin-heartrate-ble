@@ -8,5 +8,7 @@ namespace CaledosLab.Runner.Commons.Abstractions
         bool StopDeviceScan();
         event EventHandler<string> DeviceScanUpdate;
         event EventHandler DeviceScanTimeout;
+
+        IHeartRate GetHeartRate(string name);
     }
 }

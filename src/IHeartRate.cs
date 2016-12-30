@@ -12,7 +12,7 @@ namespace CaledosLab.Runner.Commons.Abstractions
     
     public interface IHeartRate
     {
-        string DeviceName { get; set; }
+        string DeviceName { get; }
         bool Start();
         bool IsRunning { get; }
         void Stop();

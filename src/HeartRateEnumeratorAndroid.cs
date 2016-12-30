@@ -74,5 +74,11 @@ namespace CaledosLab.Runner.Android.Specific
             _adapter.ScanTimeoutElapsed -= _adapter_ScanTimeoutElapsed;
             return true;
         }
+
+        public IHeartRate GetHeartRate(string name)
+        {
+            var hr = new HeartRateAndroidBLE(name);
+            return hr;
+        }
     }
 }

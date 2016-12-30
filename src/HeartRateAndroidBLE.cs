@@ -47,8 +47,10 @@ namespace CaledosLab.Runner.Android.Specific
         };
         private Status _status;
 
-        public HeartRateAndroidBLE()
+        public HeartRateAndroidBLE(string deviceName)
         {
+            _deviceName = deviceName;
+
             _adapter = CrossBluetoothLE.Current.Adapter;
             _ble = CrossBluetoothLE.Current;
 
@@ -88,11 +90,6 @@ namespace CaledosLab.Runner.Android.Specific
             get
             {
                 return _deviceName;
-            }
-
-            set
-            {
-                _deviceName = value;
             }
         }
 
