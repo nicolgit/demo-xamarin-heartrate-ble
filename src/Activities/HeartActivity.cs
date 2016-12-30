@@ -103,9 +103,17 @@ namespace nicold.heartrate.Activities
         {
             var enumerator = new HeartRateEnumeratorAndroid();
 
-            _heartRate = enumerator.GetHeartRate(_deviceName);
-            _heartRate.Start();
-            _progressWorking.Visibility = ViewStates.Visible;
+            string[] split = _deviceName.Split(':');
+
+            switch  (split[0])
+            {
+                case "BLE":
+                    _heartRate = enumerator.GetHeartRate(split[1]);
+                    _heartRate.Start();
+                    _progressWorking.Visibility = ViewStates.Visible;
+                    break;
+            }
+            
         }
     }
 }

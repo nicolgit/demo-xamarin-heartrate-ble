@@ -64,13 +64,13 @@ namespace nicold.heartrate
 			public const int button_start_hr = 2131034112;
 			
 			// aapt resource value: 0x7f050009
-			public const int button_start_scan = 2131034121;
+			public const int button_start_scan_ble = 2131034121;
 			
 			// aapt resource value: 0x7f050001
 			public const int button_stop_hr = 2131034113;
 			
 			// aapt resource value: 0x7f05000a
-			public const int button_stop_scan = 2131034122;
+			public const int button_stop_scan_ble = 2131034122;
 			
 			// aapt resource value: 0x7f05000b
 			public const int list_devices = 2131034123;
