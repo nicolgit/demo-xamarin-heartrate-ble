@@ -33,10 +33,10 @@ namespace nicold.heartrate.Activities
             _listDevices.Adapter=listAdapter;
             _listDevices.ItemClick += ListDevices_ItemClick;
 
-            Button button_start_scan = FindViewById<Button>(Resource.Id.button_start_scan);
+            Button button_start_scan = FindViewById<Button>(Resource.Id.button_start_scan_ble);
             button_start_scan.Click += Button_start_scan_Click;
 
-            Button button_stop_scan = FindViewById<Button>(Resource.Id.button_stop_scan);
+            Button button_stop_scan = FindViewById<Button>(Resource.Id.button_stop_scan_ble);
             button_stop_scan.Click += Button_stop_scan_Click;
 
             _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
@@ -54,7 +54,7 @@ namespace nicold.heartrate.Activities
                 _hrEnumerator.StartDeviceScan();
 
                 listAdapter.Clear();
-                listAdapter.Add($"> start");
+                listAdapter.Add($"> ble start");
             }
         }
 
@@ -67,19 +67,19 @@ namespace nicold.heartrate.Activities
                 _hrEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
                 _hrEnumerator.StopDeviceScan();
                 _hrEnumerator = null;
-                listAdapter.Add($"> stop");
+                listAdapter.Add($"> ble stop");
             }
         }
 
         private void _hrEnumerator_DeviceScanTimeout(object sender, EventArgs e)
         {
-            listAdapter.Add($"> timeout");
+            listAdapter.Add($"> ble timeout");
             Button_stop_scan_Click(null, null);
         }
 
         private void _hrEnumerator_DeviceScanUpdate(object sender,string deviceName)
         {
-            listAdapter.Add($"{deviceName}");
+            listAdapter.Add($"BLE:{deviceName}");
         }
 
         private void ListDevices_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
