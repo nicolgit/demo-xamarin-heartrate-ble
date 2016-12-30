@@ -31,6 +31,8 @@ namespace CaledosLab.Runner.Android.Specific
                 var bandClient = await bandClientManager.ConnectAsync(bandInfo);
 
                 DeviceScanUpdate?.Invoke(this,bandInfo.Name);
+                await Task.Delay(3000);
+                DeviceScanTimeout?.Invoke(this, null);
             }
             catch(Exception ex)
             {

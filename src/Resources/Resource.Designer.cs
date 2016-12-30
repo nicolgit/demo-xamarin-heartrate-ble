@@ -66,20 +66,29 @@ namespace nicold.heartrate
 			// aapt resource value: 0x7f050009
 			public const int button_start_scan_ble = 2131034121;
 			
+			// aapt resource value: 0x7f05000b
+			public const int button_start_scan_msband = 2131034123;
+			
 			// aapt resource value: 0x7f050001
 			public const int button_stop_hr = 2131034113;
 			
 			// aapt resource value: 0x7f05000a
 			public const int button_stop_scan_ble = 2131034122;
 			
-			// aapt resource value: 0x7f05000b
-			public const int list_devices = 2131034123;
+			// aapt resource value: 0x7f05000c
+			public const int button_stop_scan_msband = 2131034124;
+			
+			// aapt resource value: 0x7f05000e
+			public const int list_devices = 2131034126;
 			
 			// aapt resource value: 0x7f050002
 			public const int progress_work = 2131034114;
 			
-			// aapt resource value: 0x7f05000c
-			public const int rowTextView = 2131034124;
+			// aapt resource value: 0x7f05000d
+			public const int progress_work_msband = 2131034125;
+			
+			// aapt resource value: 0x7f05000f
+			public const int rowTextView = 2131034127;
 			
 			// aapt resource value: 0x7f050007
 			public const int textBattery = 2131034119;
