@@ -66,7 +66,7 @@ namespace nicold.heartrate.Activities
         protected override void OnDestroy()
         {
             _stop = true;
-            _heartRate.Stop();
+            _heartRate?.Stop();
 
             base.OnDestroy();
         }
@@ -98,22 +98,30 @@ namespace nicold.heartrate.Activities
             _progressWorking.Visibility = ViewStates.Invisible;
             _heartRate.Stop();
         }
+        string BLE = typeof(HeartRateEnumeratorAndroid).ToString();
+        string MSBand = typeof(HeartRateEnumeratorMSBand).ToString();
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
-            var enumerator = new HeartRateEnumeratorAndroid();
+            
 
             string[] split = _deviceName.Split(':');
 
-            switch  (split[0])
+            if (split[0] == BLE)
             {
-                case "BLE":
-                    _heartRate = enumerator.GetHeartRate(split[1]);
-                    _heartRate.Start();
-                    _progressWorking.Visibility = ViewStates.Visible;
-                    break;
+                var enumerator = new HeartRateEnumeratorAndroid();
+                _heartRate = enumerator.GetHeartRate(split[1]);
+                _heartRate.Start();
+                _progressWorking.Visibility = ViewStates.Visible;
             }
-            
+            else if (split[0] == MSBand)
+            {
+                var enumerator = new HeartRateEnumeratorMSBand();
+                _heartRate = enumerator.GetHeartRate(split[1]);
+                _heartRate.Start();
+                _progressWorking.Visibility = ViewStates.Visible;
+            }
+
         }
     }
 }

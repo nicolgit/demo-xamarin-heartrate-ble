@@ -6,6 +6,7 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using CaledosLab.Runner.Android.Specific;
+using CaledosLab.Runner.Commons.Abstractions;
 
 namespace nicold.heartrate.Activities
 {
@@ -14,9 +15,10 @@ namespace nicold.heartrate.Activities
     {
         private ListView _listDevices;
         ProgressBar _progressWorking;
+        ProgressBar _progressWorking_msband;
         private ArrayAdapter<string> listAdapter;
 
-        private HeartRateEnumeratorAndroid _hrEnumerator;
+        private IHeartRateEnumerator _hrEnumerator;
 
         private string selected = "";
 
@@ -40,6 +42,15 @@ namespace nicold.heartrate.Activities
             button_stop_scan.Click += Button_stop_scan_Click;
 
             _progressWorking = FindViewById<ProgressBar>(Resource.Id.progress_work);
+
+
+            Button button_start_scan_msband = FindViewById<Button>(Resource.Id.button_start_scan_msband);
+            button_start_scan_msband.Click += Button_start_scan_msband_Click;
+
+            Button button_stop_scan_msband = FindViewById<Button>(Resource.Id.button_stop_scan_msband);
+            button_stop_scan_msband.Click += Button_stop_scan_msband_Click;
+
+            _progressWorking_msband = FindViewById<ProgressBar>(Resource.Id.progress_work_msband);
         }
 
         private void Button_start_scan_Click(object sender, EventArgs e)
@@ -71,16 +82,47 @@ namespace nicold.heartrate.Activities
             }
         }
 
+        private void Button_start_scan_msband_Click(object sender, EventArgs e)
+        {
+            if (_hrEnumerator == null)
+            {
+                _progressWorking.Visibility = ViewStates.Visible;
+
+                _hrEnumerator = new HeartRateEnumeratorMSBand();
+                _hrEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
+                _hrEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
+                _hrEnumerator.StartDeviceScan();
+
+                listAdapter.Clear();
+                listAdapter.Add($"> msband start");
+            }
+        }
+
+        private void Button_stop_scan_msband_Click(object sender, EventArgs e)
+        {
+            _progressWorking.Visibility = ViewStates.Invisible;
+            if (_hrEnumerator != null)
+            {
+                _hrEnumerator.DeviceScanUpdate -= _hrEnumerator_DeviceScanUpdate;
+                _hrEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
+                _hrEnumerator.StopDeviceScan();
+                _hrEnumerator = null;
+                listAdapter.Add($"> msband stop");
+            }
+        }
+
         private void _hrEnumerator_DeviceScanTimeout(object sender, EventArgs e)
         {
-            listAdapter.Add($"> ble timeout");
+            listAdapter.Add($"> timeout {sender.GetType().ToString()}");
             Button_stop_scan_Click(null, null);
         }
 
-        private void _hrEnumerator_DeviceScanUpdate(object sender,string deviceName)
+        private void _hrEnumerator_DeviceScanUpdate(object sender, string deviceName)
         {
-            listAdapter.Add($"BLE:{deviceName}");
+            listAdapter.Add($"{sender.GetType().ToString()}:{deviceName}");
         }
+
+
 
         private void ListDevices_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
