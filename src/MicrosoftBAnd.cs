@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CaledosLab.Runner.Android.Specific
 {
-    public class MicrosoftBand : IHeartRate
+    public class MicrosoftBand : IHeartRate, IStepSensor
     {
         string name = "";
         public string DeviceName
@@ -47,11 +47,26 @@ namespace CaledosLab.Runner.Android.Specific
                     bandClient.SensorManager.HeartRate.ReadingChanged += HeartRate_ReadingChanged;
                 }
 
+                
+                await bandClient.SensorManager.Pedometer.StartReadingsAsync();
+                bandClient.SensorManager.Pedometer.ReadingChanged += Pedometer_ReadingChanged;                
+
+
             }
             catch
             {
                 
             }
+        }
+
+        long totalSteps = -1;
+        long firstRead = -1;
+        private void Pedometer_ReadingChanged(object sender, Microsoft.Band.Portable.Sensors.BandSensorReadingEventArgs<Microsoft.Band.Portable.Sensors.BandPedometerReading> e)
+        {
+            System.Diagnostics.Debug.WriteLine("Total steps: " + e.SensorReading.TotalSteps.ToString());
+            totalSteps = e.SensorReading.TotalSteps;
+            if (firstRead < 0)
+                firstRead = totalSteps;
         }
 
         HeartRateData currentData = null;
@@ -61,7 +76,7 @@ namespace CaledosLab.Runner.Android.Specific
             //{
             //    point = point == "." ? "" : ".";
             //    HeartLabel.Text = "Heart Rate: " + e.SensorReading.HeartRate.ToString() + point;
-             System.Diagnostics.Debug.WriteLine(e.SensorReading.HeartRate.ToString());
+             System.Diagnostics.Debug.WriteLine("Heart rate: " + e.SensorReading.HeartRate.ToString());
             //});
 
             currentData = new HeartRateData
@@ -82,6 +97,22 @@ namespace CaledosLab.Runner.Android.Specific
                     else
                         return false;
                 }
+            }
+        }
+
+        public int CurrentStepCount
+        {
+            get
+            {
+                return totalSteps<0 ? 0 : (int)(totalSteps - firstRead);
+            }
+        }
+
+        public DateTime LastEventDateTime
+        {
+            get
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -107,6 +138,10 @@ namespace CaledosLab.Runner.Android.Specific
                     {
                         bandClient.SensorManager.HeartRate.StopReadingsAsync();
                         bandClient.SensorManager.HeartRate.ReadingChanged -= HeartRate_ReadingChanged;
+
+                        bandClient.SensorManager.Pedometer.StopReadingsAsync();
+                        bandClient.SensorManager.Pedometer.ReadingChanged -= Pedometer_ReadingChanged;
+
                         bandClient = null;
                         currentData = null;
                     }
@@ -116,6 +151,16 @@ namespace CaledosLab.Runner.Android.Specific
 
                 }
             }
+        }
+
+        void IStepSensor.Start()
+        {
+            ((IHeartRate)this).Start();
+        }
+
+        public void Reset()
+        {
+            firstRead = totalSteps;
         }
     }
 }

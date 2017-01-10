@@ -22,6 +22,7 @@ namespace nicold.heartrate.Activities
         private string _deviceName;
 
         private IHeartRate _heartRate;
+        private IStepSensor _stepSensor;
 
         private TextView _textHR;
         private TextView _textNow;
@@ -84,6 +85,8 @@ namespace nicold.heartrate.Activities
                        
                     _textinfo.Text = data?.Timestamp.ToString() ?? "N/A";
                     _textHR.Text = data?.Value.ToString() ?? "---";
+                    if (_stepSensor != null)
+                        _textHR.Text += " / " + _stepSensor.CurrentStepCount.ToString();
 
                     _textBattery.Text = data?.BatteryLevel?.ToString() ?? "N/A";
                     _textinfo2.Text = data?.TimestampBatteryLevel?.ToString() ?? "---";
@@ -116,6 +119,8 @@ namespace nicold.heartrate.Activities
             {
                 var enumerator = new MicrosoftBandEnumerator();
                 _heartRate = enumerator.GetHeartRate(split[1]);
+                _stepSensor = _heartRate as IStepSensor;
+
                 _heartRate.Start();
                 _progressWorking.Visibility = ViewStates.Visible;
             }
