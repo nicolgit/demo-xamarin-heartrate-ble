@@ -99,7 +99,7 @@ namespace nicold.heartrate.Activities
             _heartRate.Stop();
         }
         string BLE = typeof(HeartRateEnumeratorAndroid).ToString();
-        string MSBand = typeof(HeartRateEnumeratorMSBand).ToString();
+        string MSBand = typeof(MicrosoftBandEnumerator).ToString();
 
         private void Button_start_hr_Click(object sender, EventArgs e)
         {
@@ -116,7 +116,7 @@ namespace nicold.heartrate.Activities
             }
             else if (split[0] == MSBand)
             {
-                var enumerator = new HeartRateEnumeratorMSBand();
+                var enumerator = new MicrosoftBandEnumerator();
                 _heartRate = enumerator.GetHeartRate(split[1]);
                 _heartRate.Start();
                 _progressWorking.Visibility = ViewStates.Visible;

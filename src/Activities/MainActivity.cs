@@ -88,7 +88,7 @@ namespace nicold.heartrate.Activities
             {
                 _progressWorking.Visibility = ViewStates.Visible;
 
-                _hrEnumerator = new HeartRateEnumeratorMSBand();
+                _hrEnumerator = new MicrosoftBandEnumerator();
                 _hrEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
                 _hrEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
                 _hrEnumerator.StartDeviceScan();

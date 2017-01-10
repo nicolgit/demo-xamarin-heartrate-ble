@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CaledosLab.Runner.Android.Specific
 {
-    public class HeartRateMSBand : IHeartRate
+    public class MicrosoftBand : IHeartRate
     {
         string name = "";
         public string DeviceName
