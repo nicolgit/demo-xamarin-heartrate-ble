@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CaledosLab.Runner.Android.Specific
 {
-    public class MicrosoftBandEnumerator : IHeartRateEnumerator
+    public class MicrosoftBandEnumerator : IMicrosoftBandEnumerator
     {
         public event EventHandler DeviceScanTimeout;
         public event EventHandler<string> DeviceScanUpdate;

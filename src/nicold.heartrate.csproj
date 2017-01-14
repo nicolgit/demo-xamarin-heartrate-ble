@@ -70,6 +70,7 @@
     <Compile Include="Activities\HeartActivity.cs" />
     <Compile Include="HeartRateAndroidBLE.cs" />
     <Compile Include="HeartRateEnumeratorAndroid.cs" />
+    <Compile Include="IMicrosoftBandEnumerator.cs" />
     <Compile Include="MicrosoftBandEnumerator.cs" />
     <Compile Include="MicrosoftBand.cs" />
     <Compile Include="IHeartRate.cs" />
