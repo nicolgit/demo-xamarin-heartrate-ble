@@ -36,7 +36,7 @@ namespace CaledosLab.Runner.Android.Specific
                 // connect to the first device
                 var bandInfo = pairedBands.FirstOrDefault();
                 bandClient = await bandClientManager.ConnectAsync(bandInfo);
-
+                
                 if (bandClient.SensorManager.HeartRate.UserConsented == UserConsent.Unspecified ||
                     bandClient.SensorManager.HeartRate.UserConsented == UserConsent.Declined)
                     await bandClient.SensorManager.HeartRate.RequestUserConsent();
@@ -46,12 +46,13 @@ namespace CaledosLab.Runner.Android.Specific
                     await bandClient.SensorManager.HeartRate.StartReadingsAsync();
                     bandClient.SensorManager.HeartRate.ReadingChanged += HeartRate_ReadingChanged;
                 }
-
                 
-                await bandClient.SensorManager.Pedometer.StartReadingsAsync();
-                bandClient.SensorManager.Pedometer.ReadingChanged += Pedometer_ReadingChanged;                
-
-
+                // pedometer only works with band 2
+                if (int.Parse( await bandClient.GetHardwareVersionAsync()) >=20 )
+                {
+                    await bandClient.SensorManager.Pedometer.StartReadingsAsync();
+                    bandClient.SensorManager.Pedometer.ReadingChanged += Pedometer_ReadingChanged;                
+                }
             }
             catch
             {
@@ -75,7 +76,7 @@ namespace CaledosLab.Runner.Android.Specific
             //Device.BeginInvokeOnMainThread(() =>
             //{
             //    point = point == "." ? "" : ".";
-            //    HeartLabel.Text = "Heart Rate: " + e.SensorReading.HeartRate.ToString() + point;
+            //    HeartLabel.Text = "Heart Rate:  + e.SensorReading.HeartRate.ToString() + point;
              System.Diagnostics.Debug.WriteLine("Heart rate: " + e.SensorReading.HeartRate.ToString());
             //});
 
