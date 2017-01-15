@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace CaledosLab.Runner.Android.Specific
 {
-    public class MicrosoftBandEnumerator : IHeartRateEnumerator
+    public class MicrosoftBandEnumerator : IMicrosoftBandEnumerator
     {
+        private MicrosoftBand _microsoftBand = new MicrosoftBand();
+
         public event EventHandler DeviceScanTimeout;
         public event EventHandler<string> DeviceScanUpdate;
 
@@ -48,9 +50,40 @@ namespace CaledosLab.Runner.Android.Specific
             return false;
         }
 
+        public async Task<string> GetMicrosoftBandName()
+        {
+            string name;
+
+            try
+            {
+                var bandClientManager = BandClientManager.Instance;
+                // query the service for paired devices
+
+                var pairedBands = await bandClientManager.GetPairedBandsAsync();
+
+                // connect to the first device
+                var bandInfo = pairedBands.FirstOrDefault();
+                var bandClient = await bandClientManager.ConnectAsync(bandInfo);
+
+                name = bandInfo.Name;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                name = null;
+            }
+
+            return name;
+        }
+
         public IHeartRate GetHeartRate(string name)
         {
-            return new MicrosoftBand();
+            return _microsoftBand;
+        }
+
+        public IStepSensor GetStepSensor(string name)
+        {
+            return _microsoftBand;
         }
     }
 }

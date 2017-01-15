@@ -19,6 +19,7 @@ namespace nicold.heartrate.Activities
         private ArrayAdapter<string> listAdapter;
 
         private IHeartRateEnumerator _hrEnumerator;
+        private IMicrosoftBandEnumerator _msBandEnumerator;
 
         private string selected = "";
 
@@ -88,10 +89,10 @@ namespace nicold.heartrate.Activities
             {
                 _progressWorking.Visibility = ViewStates.Visible;
 
-                _hrEnumerator = new MicrosoftBandEnumerator();
-                _hrEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
-                _hrEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
-                _hrEnumerator.StartDeviceScan();
+                _msBandEnumerator = new MicrosoftBandEnumerator();
+                _msBandEnumerator.DeviceScanUpdate += _hrEnumerator_DeviceScanUpdate;
+                _msBandEnumerator.DeviceScanTimeout += _hrEnumerator_DeviceScanTimeout;
+                _msBandEnumerator.StartDeviceScan();
 
                 listAdapter.Clear();
                 listAdapter.Add($"> msband start");
@@ -101,12 +102,12 @@ namespace nicold.heartrate.Activities
         private void Button_stop_scan_msband_Click(object sender, EventArgs e)
         {
             _progressWorking.Visibility = ViewStates.Invisible;
-            if (_hrEnumerator != null)
+            if (_msBandEnumerator != null)
             {
-                _hrEnumerator.DeviceScanUpdate -= _hrEnumerator_DeviceScanUpdate;
-                _hrEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
-                _hrEnumerator.StopDeviceScan();
-                _hrEnumerator = null;
+                _msBandEnumerator.DeviceScanUpdate -= _hrEnumerator_DeviceScanUpdate;
+                _msBandEnumerator.DeviceScanTimeout -= _hrEnumerator_DeviceScanTimeout;
+                _msBandEnumerator.StopDeviceScan();
+                _msBandEnumerator = null;
                 listAdapter.Add($"> msband stop");
             }
         }
